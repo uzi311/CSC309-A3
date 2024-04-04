@@ -1,0 +1,80 @@
+body { 
+	font-family: 'Roboto', sans-serif;
+	position: relative; margin: 10px; padding: 0; background:#000; color:#fff; 
+}
+
+header { font-weight: bold; border-bottom:1px solid grey; padding-top:5ex; padding-bottom:1ex; }
+
+nav {
+	display: flex;
+	width: 100%;
+}
+
+.alignleft { width:33.33333%; text-align:left; }
+.aligncenter { width:33.33333%; text-align:center; }
+.alignright { 
+	width:33.33333%; 
+	text-align:right; 
+}
+
+.alignright > a:hover > span {
+	transform: scale(1.2);
+	cursor: pointer;
+  }
+
+nav .ui_menu { }
+
+nav .ui_menu:hover { transform: scale(1.2); }
+
+.textblock {
+	border:1px solid white; 
+	width:50%; 
+	padding:1ex;
+	margin: 1ex auto 1ex auto;
+}
+
+.letterbox td {
+	text-align: center;
+	border:1px solid grey;
+	width:3ex;
+	height:3ex;
+}
+
+
+.keyboardrow td {
+	text-align: center;
+	border:1px solid grey;
+	width:3ex;
+	height:3ex;
+}
+
+
+.ui_top h2 {
+	text-align: center;
+}
+
+.active {
+	color: #6f6;
+	background: #000;
+}
+
+.keyboardrow {
+	cursor: pointer;
+}
+
+.keyboardrow td:hover {
+    transform: scale(1.1); 
+    transition: transform 0.2s ease; 
+}
+
+.grid-div {
+  display: flex;
+  justify-content: center;
+}
+
+.info-div {
+  position: absolute;
+  left: 0;
+  margin-left: 30px;
+}
+
