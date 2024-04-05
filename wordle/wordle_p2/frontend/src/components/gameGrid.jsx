@@ -24,9 +24,13 @@ const GameGrid = ({
   return (
     <div className='grid-div'>
       <div className='info-div'>
-        Number of players connected: {playerCount}
+        Number of players connected: 
         <br></br>
-        Time Remaining: {time}
+        <h1 className='main-info'>{playerCount}</h1>
+        <br></br>
+        Time Remaining: 
+        <br></br>
+        <h1 className='main-info'>{time}</h1>
       </div>
       <div className='game-div'>
         <center>

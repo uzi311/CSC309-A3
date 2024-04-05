@@ -11,34 +11,38 @@
  * https://restfulapi.net/rest-put-vs-post/
  **/
 
-const port = 8580; 
-const socketPort = port+1;
+// Import required modules
 const express = require('express');
-
-const app = express();
 const fs = require('fs');
+const WebSocket = require('ws');
+const cookieParser = require('cookie-parser');
 const Wordle = require("./model.js");
 
-const WebSocket = require('ws');
-const wss = new WebSocket.Server({ port: socketPort });
+// Define constants
+const port = 8580; 
+const socketPort = port + 1;
+const GAME_DURATION_SECONDS = 60;
+const cookieOptions = { maxAge: 3600000 }; // Cookie expires in 1 hour
+
+// Initialize variables
 let gameInstance = null;
 let gameTimer = null;
 let gameWinners = [];
+let words = ["words"]; // Default value
 
+// Initialize data structures
 const clients = [];
 const fingerprintMap = {};
-const GAME_DURATION_SECONDS = 60;
-
-const cookieParser = require('cookie-parser');
-app.use(cookieParser());
-
 const database = {};
-var words = ["words"]; // just in case!!
 
-const cookieOptions = {
-    maxAge: 3600000, // Expires in 1 hour (specified in milliseconds)
-};
+// Initialize Express app
+const app = express();
+app.use(cookieParser());
+app.use(express.json()); // Support JSON-encoded bodies
+app.use(express.urlencoded({ extended: true })); // Support URL-encoded bodies
 
+// Initialize WebSocket server
+const wss = new WebSocket.Server({ port: socketPort });
 
 /******************************************************************************
  * word routines
@@ -66,6 +70,7 @@ app.use(express.urlencoded({ extended: true })); // support encoded bodies
  * web socket server
  ******************************************************************************/
 
+// Handle new WebSocket connection
 wss.on('connection', function connection(ws, req) {
     const clientUserAgent = req.headers['user-agent'];
     
@@ -80,16 +85,19 @@ wss.on('connection', function connection(ws, req) {
     fingerprintMap[clientUserAgent] = ws;
     clients.push(ws);
 
+	// Start a new game if none exists
     if (!gameInstance) {
         startNewGame();
     } else {
         broadcastPlayerCount(clients.length);
     }
 
+	// Handle WebSocket disconnection
     ws.on('close', function () {
         delete fingerprintMap[clientUserAgent];
         clients.splice(clients.indexOf(ws), 1);
 
+		// End the game if all players have disconnected
         if (clients.length === 0) {
             console.log("All players disconnected. Returning to menu...");
             endGame();
@@ -99,12 +107,17 @@ wss.on('connection', function connection(ws, req) {
     });
 });
 
-// Broadcasting functions
+/******************************************************************************
+ * broadcasting functions
+ ******************************************************************************/
+
+// Broadcast player count to all clients
 function broadcastPlayerCount(count) {
     const data = { type: 'playerCount', count };
     broadcastData(data);
 }
 
+// Broadcast data to all clients
 function broadcastData(data) {
     const message = JSON.stringify(data);
     clients.forEach(client => {
@@ -114,6 +127,7 @@ function broadcastData(data) {
     });
 }
 
+// Start a new game
 function startNewGame() {
 	if (gameTimer) {
         clearInterval(gameTimer);
@@ -127,12 +141,14 @@ function startNewGame() {
     startTimer();
 }
 
+// End the current game
 function endGame() {
     clearInterval(gameTimer);
     gameInstance = null;
 	setTimeout(startNewGame, 10000);
 }
 
+// Start the game timer
 function startTimer() {
     let startTime = Date.now();
     gameTimer = setInterval(() => {
@@ -152,6 +168,8 @@ function startTimer() {
 /******************************************************************************
  * routes
  ******************************************************************************/
+
+// initialize the game and get the username and stats
 app.get('/api/username/', function (req, res) {
     const username = req.cookies.username;
     let wins, losses;
@@ -172,7 +190,7 @@ app.get('/api/username/', function (req, res) {
     }
 });
 
-
+// reset the game
 app.put('/api/username/:username/newgame', function (req, res) {
 	let username=req.params.username;
 

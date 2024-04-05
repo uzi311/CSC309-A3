@@ -9,9 +9,12 @@ import { api_getUsername, api_guess, api_newgame } from './api';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+// Main component of the application
 class Main extends React.Component {
+  // constructor for the main component
   constructor(props) {
     super(props);
+    // Initializing the state
     this.state = {
       activeComponent: 'home',
       username: '',
@@ -46,28 +49,32 @@ class Main extends React.Component {
     };
   }
 
+  // Fetch username, wins, and losses data when the component mounts
   componentDidMount() {
     api_getUsername((data) => {
       this.setState({ username: data.username, wins: data.wins, losses: data.losses });
     });
 
+    // Fetch real-time updates
     this.getDataUpdates();
   }
 
+  // Establish WebSocket connection for real-time updates
   getDataUpdates = () => {
       const socket = new WebSocket(`ws://${window.location.hostname}:8581`);
       socket.onmessage = (event) => {
         const message = JSON.parse(event.data);
         
         if (message.type === 'playerCount') {
-          // Update the UI with the number of players
+          // Update with the number of players
           this.setState({ playerCount: message.count });
         } else if (message.type === 'timerUpdate') {
-          // Update the UI with the remaining time
+          // Update with the remaining time
           this.setState({ remainingTime: message.remainingTime });
         } else {
           console.log("Unknown message type:", message.type);
         }
+        // Handle game over
         if (message.remainingTime === 0) {
           this.resetGame()
           toast("The timer ran out! Play again when the timer resets!", {
@@ -81,6 +88,7 @@ class Main extends React.Component {
             theme: "colored",
             style: { backgroundColor: 'rgba(128, 128, 128, 0.8)', color: 'white' }
           });
+          // Increment losses if the player didn't win
           if (!this.state.hasWon) {
             this.setState(prevState => ({
               losses: prevState.losses + 1,
@@ -94,6 +102,7 @@ class Main extends React.Component {
       };
   };
 
+  // Submit user's guess to the server
   makeGuess = (username, guess) => {
     api_guess(username, guess, (data) => {
       this.setState({ data });
@@ -101,6 +110,7 @@ class Main extends React.Component {
     });
   };
 
+  // Reset the game state
   resetGame = () => {
     const { username } = this.state;
     api_newgame(username, (data) => {});
@@ -129,6 +139,7 @@ class Main extends React.Component {
     });
   };
 
+  // Color the game board and keyboard based on the score
   colorBoardAndKeyboard = (score) => {
     const { row, gameColors, guess } = this.state;
     const newColors = [...gameColors];
@@ -156,6 +167,7 @@ class Main extends React.Component {
     }
   };
 
+  // Set color for a keyboard key
   setKeyboardColor = (key, color) => {
     this.setState(prevState => {
       const currentColor = prevState.keyboardKeyColors[key];
@@ -168,7 +180,7 @@ class Main extends React.Component {
     });
   };
   
-
+  // update the game grid
   updateGrid = (rowIndex, colIndex, value) => {
     const { gameGrid } = this.state;
     const updatedGrid = gameGrid.map((row, i) =>
@@ -179,6 +191,7 @@ class Main extends React.Component {
     this.setState({ gameGrid: updatedGrid });
   };
 
+  // remove a character
   delCharacter = () => {
     const { col, row } = this.state;
     if (col > 0) {
@@ -190,6 +203,7 @@ class Main extends React.Component {
     }
   };
 
+  // add a character
   putCharacter = c => {
     const { col, row } = this.state;
     if (col < 5) {
@@ -201,6 +215,7 @@ class Main extends React.Component {
     }
   };
 
+  // Handle key press events
   handleKeyPress = key => {
     if (key === 'DEL') {
       this.delCharacter();
@@ -219,6 +234,7 @@ class Main extends React.Component {
     }
   };
 
+  // Handle guess result from the server
   handleGuessResult = (data) => {
     if (data.success) {
       this.colorBoardAndKeyboard(data.score);
@@ -235,9 +251,16 @@ class Main extends React.Component {
       } else if (data.state === "won") {
         this.setState({ hasWon: true, winners: data.winners })
         let position = data.winners.length
-        toast.success("Congratulations, you " + data.state + "!, placing " + position + " out of " + this.state.playerCount + " players!\n\nPlay again by waiting for the next iteration of the game to start!", {
+        toast.success(
+          <>
+            {"Congratulations, you " + data.state + "!,"}
+            <br />
+            {"You placed " + position + " out of " + this.state.playerCount + " players!"}
+            <br />
+            {"Play again by waiting for the next iteration of the game to start!"}
+          </>, {
           position: "top-right",
-          autoClose: 5000,
+          autoClose: 10000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
@@ -255,6 +278,7 @@ class Main extends React.Component {
     }
   };
 
+  // Handle click on the header
   handleHeaderClick = (componentName) => {
     this.setState({ activeComponent: componentName });
   }

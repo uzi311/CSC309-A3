@@ -22,10 +22,6 @@ nav {
 	cursor: pointer;
   }
 
-nav .ui_menu { }
-
-nav .ui_menu:hover { transform: scale(1.2); }
-
 .textblock {
 	border:1px solid white; 
 	width:50%; 
@@ -40,14 +36,12 @@ nav .ui_menu:hover { transform: scale(1.2); }
 	height:3ex;
 }
 
-
 .keyboardrow td {
 	text-align: center;
 	border:1px solid grey;
 	width:3ex;
 	height:3ex;
 }
-
 
 .ui_top h2 {
 	text-align: center;
@@ -73,8 +67,31 @@ nav .ui_menu:hover { transform: scale(1.2); }
 }
 
 .info-div {
+  padding: 20px;
   position: absolute;
   left: 0;
-  margin-left: 30px;
+  margin-left: 80px;
+  margin-top: 30px;
+  text-align: center;
+  border:1px solid white; 
 }
+
+@media screen and (max-width: 1100px) {
+	.info-div {
+	  margin-left: 10px;
+	  margin-top: 30px;
+	}
+  }
+
+  @media screen and (max-width: 900px) {
+	.info-div {
+	  margin: 0px;
+	  padding: 5px;
+	  font-size: small;
+	}
+  }
+
+
+
+
 

@@ -4,9 +4,9 @@ const GameHome = ({ onSoloClick }) => {
   return (
     <div>
       <div className="textblock"> 
-        <span onClick={onSoloClick} style={{ cursor: 'pointer' }}>Solo</span>
+        <span onClick={onSoloClick} style={{ cursor: 'pointer' }}>Classic</span>
         <br/>
-        Play the classic game against yourself. 
+        Play the classic game against others. 
       </div>
     </div>
   );

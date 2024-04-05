@@ -18,7 +18,7 @@ module.exports = class Wordle {
 		this.username=this.makeUsername();
 		this.won=0;
 		this.lost=0;
-		this.target= "APPLE" //this.getRandomWord();
+		this.target= this.getRandomWord();
 		this.guesses=[];
 		this.scores=[];
 		this.state="play"; // could be none, won, lost, play
@@ -28,7 +28,7 @@ module.exports = class Wordle {
 	// Reset the state of this, starting a new game, we don't change our username
 	// nor the number of games won or lost
 	reset(){
-		this.target= "APPLE"      //this.getRandomWord();
+		this.target= this.getRandomWord();
 		this.guesses=[];
 		this.scores=[];
 		this.state="play"; // could be none, won, lost, play
@@ -43,9 +43,9 @@ module.exports = class Wordle {
 		return this.getRandomWord()+this.getRandomWord();
 	}
 
-	setUsername(username){
-		this.username=username;
-	}
+	// getter and setter methods
+
+	setUsername(username){ this.username=username; }
 
 	getUsername(){ return this.username; }
 
