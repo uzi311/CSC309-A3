@@ -21,7 +21,7 @@ const Wordle = require("./model.js");
 // Define constants
 const port = 8580; 
 const socketPort = port + 1;
-const GAME_DURATION_SECONDS = 60;
+const GAME_DURATION_SECONDS = 300;
 const cookieOptions = { maxAge: 3600000 }; // Cookie expires in 1 hour
 
 // Initialize variables

@@ -46,6 +46,8 @@ class Main extends React.Component {
       isActive: true,
       hasWon: false,
       winners: [],
+      target: '',
+      lost: false,
     };
   }
 
@@ -77,22 +79,41 @@ class Main extends React.Component {
         // Handle game over
         if (message.remainingTime === 0) {
           this.resetGame()
-          toast("The timer ran out! Play again when the timer resets!", {
-            position: "top-right",
-            autoClose: 10000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-            style: { backgroundColor: 'rgba(128, 128, 128, 0.8)', color: 'white' }
-          });
           // Increment losses if the player didn't win
           if (!this.state.hasWon) {
             this.setState(prevState => ({
               losses: prevState.losses + 1,
             }))
+            toast(
+            <>
+              {"The timer ran out!"}
+              <br></br>
+              {"The correct word was " + this.state.target}
+              <br></br>
+              {"Play again when the timer resets!"}
+            </>, {
+              position: "top-right",
+              autoClose: 10000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+              style: { backgroundColor: 'rgba(255, 0, 0, 0.8)', color: 'white' }
+            });
+          } else {
+            toast("The timer ran out! Play again when the timer resets!", {
+              position: "top-right",
+              autoClose: 10000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+              style: { backgroundColor: 'rgba(128, 128, 128, 0.8)', color: 'white' }
+            });
           }
           this.setState({ isActive: false })
         } else {
@@ -245,8 +266,10 @@ class Main extends React.Component {
         guess: Array(5).fill(''),
         row: prevState.row + 1,
         col: 0,
+        target: data.target,
       }));
       if (data.state === "lost") {
+        this.setState({ lost: true })
         toast("You " + data.state + "! The correct word was " + data.target + "\nPlay again by waiting for the next iteration of the game to start!");
       } else if (data.state === "won") {
         this.setState({ hasWon: true, winners: data.winners })
